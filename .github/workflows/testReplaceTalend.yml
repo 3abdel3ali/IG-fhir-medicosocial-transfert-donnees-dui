@@ -1,0 +1,46 @@
+name: Run JAR on new ZIP in NOS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "NOS/*.zip"   # déclenche uniquement si un .zip est poussé dans NOS/
+
+jobs:
+  run-jar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'   # adapte si besoin
+
+      - name: Vérifier le dossier JAR
+        run: ls -lh JAR/
+
+      - name: Exécuter le JAR
+        run: |
+          JAR_FILE=$(ls -t JAR/*.jar | head -n1)
+          echo "Exécution de $JAR_FILE"
+          
+          # Exécution du JAR
+          java -jar "$JAR_FILE"
+          
+          # Création du dossier log/ si inexistant
+          mkdir -p log
+          
+          # Déplacement du log généré par le JAR
+          # ⚠️ adapte 'application.log' au vrai nom du log généré
+          mv application.log log/ || echo "⚠️ Aucun log généré trouvé"
+
+      - name: Sauvegarder le log comme artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-log
+          path: log/
