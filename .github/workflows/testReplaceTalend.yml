@@ -33,8 +33,8 @@ jobs:
         run: |
           JAR_FILE=$(ls -t JAR/*.jar | head -n1)
           echo "Exécution de $JAR_FILE"
-          
-          java -jar "$JAR_FILE"
+        
+          java -jar "$JAR_FILE" 2>&1 | tee log/execution.log
           
           mkdir -p log
           # ⚠️ adapte le nom du log généré
