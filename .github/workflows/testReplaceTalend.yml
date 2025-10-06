@@ -5,7 +5,12 @@ on:
     branches:
       - main
     paths:
-      - "NOS/*.zip"   # déclenche uniquement si un .zip est poussé dans NOS/
+      - "NOS/*.zip"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "NOS/*.zip"
 
 jobs:
   run-jar:
@@ -29,14 +34,10 @@ jobs:
           JAR_FILE=$(ls -t JAR/*.jar | head -n1)
           echo "Exécution de $JAR_FILE"
           
-          # Exécution du JAR
           java -jar "$JAR_FILE"
           
-          # Création du dossier log/ si inexistant
           mkdir -p log
-          
-          # Déplacement du log généré par le JAR
-          # ⚠️ adapte 'application.log' au vrai nom du log généré
+          # ⚠️ adapte le nom du log généré
           mv application.log log/ || echo "⚠️ Aucun log généré trouvé"
 
       - name: Sauvegarder le log comme artefact
