@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - "NOS/*.zip"
+      - "nos/*.zip"
   pull_request:
     branches:
       - main
     paths:
-      - "NOS/*.zip"
+      - "nos/*.zip"
 
 jobs:
   run-jar:
