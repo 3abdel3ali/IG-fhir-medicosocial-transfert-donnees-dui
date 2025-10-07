@@ -55,12 +55,15 @@ jobs:
 
           # Créer le répertoire log (à la racine du dépôt)
           mkdir -p ../log
+<<<<<<< HEAD
 
           # Horodatage pour le fichier de log
           TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
           LOG_FILE="../log/execution_${TIMESTAMP}.log"
 
           echo "📝 Le log sera enregistré sous : $LOG_FILE"
+=======
+>>>>>>> parent of 60f2532 (Update testReplaceTalend.yml)
 
           # Exécuter le JAR (le plus récent dans JAR/)
           JAR_FILE=$(ls -t *.jar | head -n1)
