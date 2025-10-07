@@ -54,7 +54,7 @@ jobs:
           fi
 
           # Créer le répertoire log (à la racine du dépôt)
-          mkdir -p ../log
+          # mkdir -p ../log
 
           # Exécuter le JAR (le plus récent dans JAR/)
           JAR_FILE=$(ls -t *.jar | head -n1)
