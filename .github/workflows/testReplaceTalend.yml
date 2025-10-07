@@ -17,31 +17,53 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Récupération du dépôt
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Installation de Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'   # adapte si besoin
+          java-version: '17'
 
-      - name: Vérifier le dossier JAR
-        run: ls -lh JAR/
-
-      - name: Exécuter le JAR
+      # 3️⃣ Debug : afficher la structure du dépôt et s'assurer que le fichier de config existe
+      - name: Debug - vérifier les fichiers et chemins
         run: |
-          JAR_FILE=$(ls -t JAR/*.jar | head -n1)
-          echo "Exécution de $JAR_FILE"
-        
-          java -jar "$JAR_FILE" 2>&1 | tee log/execution.log
-          
-          mkdir -p log
-          # ⚠️ adapte le nom du log généré
-          mv application.log log/ || echo "⚠️ Aucun log généré trouvé"
+          echo "Répertoire courant : $(pwd)"
+          echo "Contenu de la racine :"
+          ls -la
+          echo "Contenu du dossier JAR :"
+          ls -la JAR || true
+          echo "Git index pour JAR/configuration.properties :"
+          git ls-files -- JAR/configuration.properties || true
 
-      - name: Sauvegarder le log comme artefact
+      # 4️⃣ Exécution du JAR depuis son propre répertoire
+      - name: Exécuter le JAR depuis son répertoire
+        working-directory: JAR
+        run: |
+          echo "Répertoire courant : $(pwd)"
+          echo "Contenu du dossier JAR :"
+          ls -la
+
+          # Vérifier la présence du fichier de configuration
+          if [ ! -f configuration.properties ]; then
+            echo "❌ Fichier configuration.properties introuvable dans $(pwd)"
+            exit 1
+          fi
+
+          # Créer le répertoire log (à la racine du dépôt)
+          mkdir -p ../log
+
+          # Exécuter le JAR (le plus récent dans JAR/)
+          JAR_FILE=$(ls -t *.jar | head -n1)
+          echo "🔧 Exécution de $JAR_FILE"
+          java -jar "$JAR_FILE" 2>&1 | tee ../log/execution.log
+
+      # 5️⃣ Sauvegarde des logs comme artefacts
+      - name: Sauvegarder les logs générés
         uses: actions/upload-artifact@v4
         with:
-          name: jar-log
+          name: jar-logs
           path: log/
