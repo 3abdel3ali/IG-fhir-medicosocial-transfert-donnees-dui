@@ -61,6 +61,19 @@ jobs:
           echo "🔧 Exécution de $JAR_FILE"
           java -jar "$JAR_FILE" 2>&1 | tee ../log/execution.log
 
+          echo "🔍 Recherche du fichier de log généré par le JAR..."
+          # Trouver les fichiers .log générés pendant le run
+          find /home/runner -type f -name "*.log" 2>/dev/null | tee ../log/logs_found.txt
+
+          echo "📂 Déplacement des logs trouvés vers le dossier log/"
+          while IFS= read -r f; do
+          echo "Déplacement de $f vers ../log/"
+          cp "$f" ../log/ || true
+          done < ../log/logs_found.txt
+
+          echo "✅ Logs déplacés dans le dossier log/"
+          ls -lh ../log
+
       # 5️⃣ Sauvegarde des logs comme artefacts
       - name: Sauvegarder les logs générés
         uses: actions/upload-artifact@v4
