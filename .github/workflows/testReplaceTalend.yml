@@ -39,6 +39,12 @@ jobs:
           echo "Git index pour JAR/configuration.properties :"
           git ls-files -- JAR/configuration.properties || true
 
+      - name: Configurer le fuseau horaire sur Paris
+        run: |
+          echo "🕒 Configuration du fuseau horaire sur Europe/Paris"
+          sudo ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+          date
+      
       # 4️⃣ Exécution du JAR depuis son propre répertoire
       - name: Exécuter le JAR depuis son répertoire
         working-directory: JAR
@@ -55,9 +61,9 @@ jobs:
 
           # Créer le répertoire log (à la racine du dépôt)
           mkdir -p ../log
-          # Horodatage pour le fichier de log
-          TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
-          LOG_FILE="../log/execution_${TIMESTAMP}.log"
+          # Horodatage basé sur fuseau Europe/Paris
+            TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+            LOG_FILE="../log/execution_${TIMESTAMP}.log"
 
           echo "📝 Le log sera enregistré sous : $LOG_FILE"
 
